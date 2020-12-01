@@ -1,8 +1,10 @@
 package com.best.uploadservice;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.SystemClock;
@@ -10,12 +12,19 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+
+import com.nabinbhandari.android.permissions.PermissionHandler;
+import com.nabinbhandari.android.permissions.Permissions;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,6 +39,26 @@ public class BackgroundService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        List<String> notGranted = new ArrayList<>();
+        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
+            notGranted.add(Manifest.permission.READ_PHONE_STATE);
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            notGranted.add(Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (notGranted.size() > 0) {
+            String[] permissions = notGranted.toArray(new String[notGranted.size()]);
+            Permissions.check(this/*context*/, permissions, null/*rationale*/, null/*options*/, new PermissionHandler() {
+                @Override
+                public void onGranted() {
+                    doStuff();
+                }
+            });
+        } else {
+            doStuff();
+        }
+    }
+
+    private void doStuff() {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         new Timer().scheduleAtFixedRate(new TimerTask() {
