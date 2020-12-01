@@ -47,7 +47,8 @@ public class BackgroundService extends IntentService {
 
         if (notGranted.size() > 0) {
             String[] permissions = notGranted.toArray(new String[notGranted.size()]);
-            Permissions.check(this/*context*/, permissions, null/*rationale*/, null/*options*/, new PermissionHandler() {
+            Permissions.Options options = new Permissions.Options().setCreateNewTask(true);
+            Permissions.check(this, permissions, null, options, new PermissionHandler() {
                 @Override
                 public void onGranted() {
                     doStuff();
