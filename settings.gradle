@@ -1,0 +1,3 @@
+include ':UploadService'
+include ':app'
+rootProject.name = "Uploader"
